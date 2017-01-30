@@ -3,7 +3,7 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [packages]
-youtube_dl = "*"
-Jinja2 = "*"
 requests = "*"
 boto3 = "*"
+youtube-dl = "*"
+jinja2 = "*"

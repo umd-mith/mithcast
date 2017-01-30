@@ -27,8 +27,12 @@ def write_podcast(feed, filename):
     codecs.open(filename, "w", "utf8").write(xml)
 
 def add_enclosures(feed):
-    published = published_files()
-
+    """
+    This does most of the work. It walks through the entries in the feed
+    and looks to see if an mp3 has been uploaded to Amazon. If it hasn't
+    then it downloads the video from Vimeo, and extracts the audio.
+    """
+ 
     for entry in feed.entries:
 
         vimeo_url = get_vimeo_url(entry.link)
@@ -37,16 +41,15 @@ def add_enclosures(feed):
         logging.info("found video %s", vimeo_url)
         
         mp3_file = "%s.mp3" % os.path.basename(vimeo_url) 
+        mp3_obj = get_object(mp3_file)
 
-        if mp3_file not in published:
-            logging.info("%s already published" % mp3_file)
+        if mp3_obj:
+            entry.enclosure_length = mp3_obj.content_length
         else:
-            download_mp3(vimeo_url)
+            mp3_path = download_mp3(vimeo_url)
+            entry.enclosure_length = os.path.getsize(mp3_path)
 
-        mp3_path = "bucket/%s" % mp3_file
-        entry.enclosure_length = os.path.getsize(mp3_path)
         entry.enclosure_url = S3_BUCKET_URL + mp3_file
-        break
 
 def get_vimeo_url(url):
     html = requests.get(url).content
@@ -56,6 +59,7 @@ def get_vimeo_url(url):
     return m.group(0)
 
 def download_mp3(vimeo_url):
+    logging.info("downloading %s", vimeo_url)
     video_id = os.path.basename(vimeo_url)
     opts = {
         #'quiet': True,
@@ -80,10 +84,10 @@ def publish():
     bucket.upload_file('bucket/podcast.xml', 'podcast.xml',
                        ExtraArgs={'ContentType': 'application/rss+xml'})
 
-    # only upload new files 
-    for path in glob.glob("bucket/*.mp3"):
-        mp3 = os.path.basename(path)
-        if mp3 not in published:
+    # only upload files that aren't already there
+    for mp3 in os.listdir("bucket"):
+        mp3_obj = get_object(mp3)
+        if not mp3_obj:
             key = bucket.upload_file(path, mp3, 
                                      ExtraArgs={"ContentType": "audio/mpeg"})
 
@@ -91,6 +95,15 @@ def published_files():
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(S3_BUCKET)
     return set([key.key for key in bucket.objects.all()])
+
+def get_object(key):
+    s3 = boto3.resource('s3')
+    o = None
+    try:
+        o = s3.Object(S3_BUCKET, key)
+    except:
+        pass
+    return o
 
 if __name__ == "__main__":
     logging.basicConfig(

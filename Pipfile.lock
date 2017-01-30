@@ -1,16 +1,16 @@
 {
     "default": {
-        "python_dateutil": {
-            "version": "==2.6.0",
-            "hash": "sha256:537bf2a8f8ce6f6862ad705cd68f9e405c0b5db014aa40fa29eab4335d4b1716"
+        "six": {
+            "version": "==1.10.0",
+            "hash": "sha256:0ff78c403d9bccf5a425a6d31a12aa6b47f1c21ca4dc2573a7e2f32a97335eb1"
+        },
+        "youtube-dl": {
+            "version": "==2017.1.29",
+            "hash": "sha256:bab89819b66c3d14ddff0f3310eaf62eec09df15e6426d4ab061d6819f7204e1"
         },
         "MarkupSafe": {
             "version": "==0.23",
             "hash": "sha256:a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3"
-        },
-        "six": {
-            "version": "==1.10.0",
-            "hash": "sha256:0ff78c403d9bccf5a425a6d31a12aa6b47f1c21ca4dc2573a7e2f32a97335eb1"
         },
         "futures": {
             "version": "==3.0.5",
@@ -28,25 +28,25 @@
             "version": "==0.13.1",
             "hash": "sha256:de454f1015958450b72641165c08afe7023cd7e3944396448f2fb1b0ccba9d77"
         },
-        "Jinja2": {
+        "jinja2": {
             "version": "==2.9.5",
             "hash": "sha256:a7b7438120dbe76a8e735ef7eba6048eaf4e0b7dbc530e100812f8ec462a4d50"
         },
-        "requests": {
-            "version": "==2.13.0",
-            "hash": "sha256:1a720e8862a41aa22e339373b526f508ef0c8988baf48b84d3fc891a8e237efb"
+        "python-dateutil": {
+            "version": "==2.6.0",
+            "hash": "sha256:537bf2a8f8ce6f6862ad705cd68f9e405c0b5db014aa40fa29eab4335d4b1716"
+        },
+        "jmespath": {
+            "version": "==0.9.1",
+            "hash": "sha256:19942132a80f4bdeeb597f2027a48dc4dae3b99f407a8d5d7079d142c97c11b7"
         },
         "botocore": {
             "version": "==1.5.7",
             "hash": "sha256:d4899761be18537e4ba7d7a633a85d7e0e311248ec620dd69f01707f1f437075"
         },
-        "youtube_dl": {
-            "version": "==2017.1.29",
-            "hash": "sha256:bab89819b66c3d14ddff0f3310eaf62eec09df15e6426d4ab061d6819f7204e1"
-        },
-        "jmespath": {
-            "version": "==0.9.1",
-            "hash": "sha256:19942132a80f4bdeeb597f2027a48dc4dae3b99f407a8d5d7079d142c97c11b7"
+        "requests": {
+            "version": "==2.13.0",
+            "hash": "sha256:1a720e8862a41aa22e339373b526f508ef0c8988baf48b84d3fc891a8e237efb"
         }
     },
     "develop": {},
@@ -59,7 +59,7 @@
         ],
         "requires": {},
         "hash": {
-            "sha256": "a2d33b6108162ed9c5147f915ebc109b41deb554556b534989b75a947057a50b"
+            "sha256": "787b35a654c58ca16d637f8022aa5672ae9e318bbca8a9deca34b5224045e80c"
         }
     }
 }

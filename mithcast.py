@@ -9,6 +9,7 @@ import glob
 import boto3
 import codecs
 import jinja2
+import logging
 import requests
 import feedparser
 import youtube_dl
@@ -33,10 +34,13 @@ def add_enclosures(feed):
         vimeo_url = get_vimeo_url(entry.link)
         if not vimeo_url:
             continue
+        logging.info("found video %s", vimeo_url)
         
         mp3_file = "%s.mp3" % os.path.basename(vimeo_url) 
 
         if mp3_file not in published:
+            logging.info("%s already published" % mp3_file)
+        else:
             download_mp3(vimeo_url)
 
         mp3_path = "bucket/%s" % mp3_file
@@ -89,4 +93,9 @@ def published_files():
     return set([key.key for key in bucket.objects.all()])
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        filename="mithcast.log", 
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level=logging.INFO)
+    logging.info("started")
     main()

@@ -54,8 +54,6 @@ def add_enclosures(feed):
         entry.enclosure_url = S3_BUCKET_URL + mp3_file
         new_entries.append(entry)
 
-        break
-
     feed.entries = new_entries
 
 def get_vimeo_url(url):

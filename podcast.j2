@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" 
+    xmlns:atom="http://www.w3.org/2005/Atom" 
+    xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+
+<channel>
+    <title>MITH's Digital Dialogues</title>
+    <description>Digital Dialogues is MITH’s signature events program, held almost every week while the academic semester is in session. Digital Dialogues is an occasion for discussion, presentation, and intellectual exchange about topics of interest to the digital humanities. It has been running over ten years. Please follow @digdialog and @umd_mith on Twitter to follow the livestream and online discussion for the events.</description>
+    <link>http://mith.umd.edu/digital-dialogues/</link>
+    <image>
+        <url>http://digital-dialogues.s3-website-us-east-1.amazonaws.com/mith.jpg</url>
+        <title>MITH's Digital Dialogues</title>
+        <link>http://mith.umd.edu/digital-dialogues/</link>
+    </image>
+    <language>en-US</language>
+    <atom:link rel="self" href="{{ feed_url }}" />
+    <itunes:category text="Society &amp; Culture" />
+    <itunes:category text="Technology" />
+    <itunes:explicit>no</itunes:explicit>
+    <itunes:owner>
+        <itunes:email>mith@umd.edu</itunes:email>
+    </itunes:owner>
+
+    {% for entry in entries %}
+    <item>
+       <title>{{ entry.title }}</title>
+       <link>{{ entry.link }}</link>
+       <description><![CDATA[{{ entry.description }}]]></description>
+       <guid>{{ entry.link }}</guid>
+       <pubDate>{{ entry.published }}</pubDate>
+       <enclosure length="{{ entry.enclosure_length }}" type="audio/mp3" url="{{ entry.enclosure_url }}" />
+    </item>
+    {% endfor %}
+
+</channel>
+
+</rss>
+

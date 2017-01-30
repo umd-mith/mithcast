@@ -1,3 +1,4 @@
-bucket/*
+*.log
+tmp/*
 .venv
 *.pyc

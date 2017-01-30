@@ -18,28 +18,26 @@ def main():
     feed_url = "http://mith.umd.edu/digital-dialogues/dialogues/feed/"
     feed = feedparser.parse(feed_url)
     add_enclosures(feed)
-    write_podcast(feed, "bucket/podcast.xml")
-    publish()
-
-def write_podcast(feed, filename):
-    tmpl = jinja2.Template(codecs.open("feed.j2", "r", "utf8").read())
-    xml = tmpl.render(entries=feed.entries, feed_url=S3_BUCKET_URL + "podcast.xml") 
-    codecs.open(filename, "w", "utf8").write(xml)
+    publish(feed)
 
 def add_enclosures(feed):
     """
     This does most of the work. It walks through the entries in the feed
     and looks to see if an mp3 has been uploaded to Amazon. If it hasn't
-    then it downloads the video from Vimeo, and extracts the audio.
+    then it downloads the video from Vimeo, and extracts the audio, and 
+    uploads it to S3. Each entry in the feed object that is passed in is 
+    annotated with the enclosure_url and enclosure_length that is needed
+    to write out the podcast.
     """
- 
+
+    new_entries = []
     for entry in feed.entries:
 
         vimeo_url = get_vimeo_url(entry.link)
         if not vimeo_url:
             continue
+
         logging.info("found video %s", vimeo_url)
-        
         mp3_file = "%s.mp3" % os.path.basename(vimeo_url) 
         mp3_obj = get_object(mp3_file)
 
@@ -47,11 +45,23 @@ def add_enclosures(feed):
             entry.enclosure_length = mp3_obj.content_length
         else:
             mp3_path = download_mp3(vimeo_url)
+            mp3_file = os.path.basename(mp3_path)
+            bucket = s3.Bucket(S3_BUCKET)
+            key = bucket.upload_file(mp3_path, mp3_file, 
+                                     ExtraArgs={"ContentType": "audio/mpeg"})
             entry.enclosure_length = os.path.getsize(mp3_path)
 
         entry.enclosure_url = S3_BUCKET_URL + mp3_file
+        new_entries.append(entry)
+
+        break
+
+    feed.entries = new_entries
 
 def get_vimeo_url(url):
+    """
+    Scrapes the Vimeo URL out of the detail page for a Digital Dialogue event.
+    """
     html = requests.get(url).content
     m = re.search('https://vimeo.com/\d+', html)
     if not m:
@@ -59,11 +69,15 @@ def get_vimeo_url(url):
     return m.group(0)
 
 def download_mp3(vimeo_url):
+    """
+    Uses the magic of youtub-dl to download the Vimeo URL and extract the mp3.
+    """
     logging.info("downloading %s", vimeo_url)
     video_id = os.path.basename(vimeo_url)
     opts = {
-        #'quiet': True,
-        'outtmpl': 'bucket/%(id)s.%(ext)s',
+        'quiet': True,
+        'no_warnings': True,
+        'outtmpl': u"tmp/%(id)s.%(ext)s",
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -73,36 +87,28 @@ def download_mp3(vimeo_url):
     }
     ydl = youtube_dl.YoutubeDL(opts)
     ydl.download([vimeo_url])
-    return "bucket/%s.mp3" % video_id
+    return "tmp/%s.mp3" % video_id
 
-def publish():
+def publish(feed):
+    """
+    Publishes the feed.
+    """
+    tmpl = jinja2.Template(codecs.open("podcast.j2", "r", "utf8").read())
+    xml = tmpl.render(entries=feed.entries, feed_url=S3_BUCKET_URL + "podcast.xml") 
+    codecs.open("tmp/podcast.xml", "w", "utf8").write(xml)
+
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(S3_BUCKET)
-    published = published_files()
-
-    # always update the feed
-    bucket.upload_file('bucket/podcast.xml', 'podcast.xml',
+    bucket.upload_file('tmp/podcast.xml', 'podcast.xml',
                        ExtraArgs={'ContentType': 'application/rss+xml'})
-
-    # only upload files that aren't already there
-    for mp3 in os.listdir("bucket"):
-        mp3_obj = get_object(mp3)
-        if not mp3_obj:
-            key = bucket.upload_file(path, mp3, 
-                                     ExtraArgs={"ContentType": "audio/mpeg"})
-
-def published_files():
-    s3 = boto3.resource('s3')
-    bucket = s3.Bucket(S3_BUCKET)
-    return set([key.key for key in bucket.objects.all()])
 
 def get_object(key):
     s3 = boto3.resource('s3')
-    o = None
     try:
-        o = s3.Object(S3_BUCKET, key)
-    except:
-        pass
+        o = s3.Object(bucket_name=S3_BUCKET, key=key)
+        o.content_length
+    except Exception as e:
+        o = None
     return o
 
 if __name__ == "__main__":

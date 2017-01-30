@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+
+<channel>
+    <title>Digital Dialogue Podcast</title>
+    <description>Digital Dialogues is MITH’s signature events program, held almost every week while the academic semester is in session. Digital Dialogues is an occasion for discussion, presentation, and intellectual exchange that you can build into your weekly schedule. All talks are open to the public and attendees are invited to bring their own refreshments. Upcoming talks for this semester will appear on the calendar to the right, or you can download a printable schedule or view a list of talk abstracts below when they become available. Podcasts will be posted after each talk on our Dialogues page, where you can also listen to archived podcasts from past semesters. Follow @digdialog for updates and live tweets on presentation days.</description>
+    <link>http://mith.umd.edu/digital-dialogues/</link>
+    <atom:link rel="self" href="{{ feed_url }}" />
+
+    {% for entry in entries %}
+    <item>
+       <title>{{ entry.title }}</title>
+       <link>{{ entry.link }}</link>
+       <description><![CDATA[{{ entry.description }}]]></description>
+       <guid>{{ entry.link }}</guid>
+       <pubDate>{{ entry.published }}</pubDate>
+       <enclosure length="{{ entry.enclosure_length }}" type="audio/mp3" url="{{ entry.enclosure_url }}" />
+    </item>
+    {% endfor %}
+
+</channel>
+
+</rss>
+

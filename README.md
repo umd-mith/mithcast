@@ -14,6 +14,7 @@ any more involved.
 First make sure AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID are set in your
 environment.
 
+    apt-get install libav-utils
     git clone https://github.com/umd-mith/mithcast 
     cd mithcast
     pipenv install

@@ -28,6 +28,10 @@
             "version": "==0.13.1",
             "hash": "sha256:de454f1015958450b72641165c08afe7023cd7e3944396448f2fb1b0ccba9d77"
         },
+        "feedparser": {
+            "version": "==5.2.1",
+            "hash": "sha256:cd2485472e41471632ed3029d44033ee420ad0b57111db95c240c9160a85831c"
+        },
         "jinja2": {
             "version": "==2.9.5",
             "hash": "sha256:a7b7438120dbe76a8e735ef7eba6048eaf4e0b7dbc530e100812f8ec462a4d50"
@@ -36,17 +40,17 @@
             "version": "==2.6.0",
             "hash": "sha256:537bf2a8f8ce6f6862ad705cd68f9e405c0b5db014aa40fa29eab4335d4b1716"
         },
-        "jmespath": {
-            "version": "==0.9.1",
-            "hash": "sha256:19942132a80f4bdeeb597f2027a48dc4dae3b99f407a8d5d7079d142c97c11b7"
+        "requests": {
+            "version": "==2.13.0",
+            "hash": "sha256:1a720e8862a41aa22e339373b526f508ef0c8988baf48b84d3fc891a8e237efb"
         },
         "botocore": {
             "version": "==1.5.7",
             "hash": "sha256:d4899761be18537e4ba7d7a633a85d7e0e311248ec620dd69f01707f1f437075"
         },
-        "requests": {
-            "version": "==2.13.0",
-            "hash": "sha256:1a720e8862a41aa22e339373b526f508ef0c8988baf48b84d3fc891a8e237efb"
+        "jmespath": {
+            "version": "==0.9.1",
+            "hash": "sha256:19942132a80f4bdeeb597f2027a48dc4dae3b99f407a8d5d7079d142c97c11b7"
         }
     },
     "develop": {},
@@ -59,7 +63,7 @@
         ],
         "requires": {},
         "hash": {
-            "sha256": "787b35a654c58ca16d637f8022aa5672ae9e318bbca8a9deca34b5224045e80c"
+            "sha256": "5b60e08caa5375cae8e88e3d5aaecd7f6c1214125123da7f8656ba5d89b8d0f6"
         }
     }
 }

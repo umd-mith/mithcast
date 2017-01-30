@@ -6,7 +6,7 @@ on a schedule from cron.
 First make sure AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID are set in your
 environment.
 
-    git clone https://github.com/docnow/mithcast 
+    git clone https://github.com/umd-mith/mithcast 
     cd mithcast
     pipenv install
     ./mithcast.py

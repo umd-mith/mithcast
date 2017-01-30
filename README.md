@@ -23,7 +23,7 @@ environment.
 A log will be written about its activity. You should be able to see the end
 result at: 
 
-    http://digital-dialogues.s3-website-us-east-1.amazonaws.com/podcast.xml
+http://digital-dialogues.s3-website-us-east-1.amazonaws.com/podcast.xml
 
 [Digital Dialogue RSS feed]: http://mith.umd.edu/digital-dialogues/dialogues/feed/
 

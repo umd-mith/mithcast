@@ -73,15 +73,15 @@ def publish():
     published = published_files()
 
     # always update the feed
-    bucket.upload_file('bucket/podcast.xml', 'podcast.xml')
-    obj = s3.Object(S3_BUCKET, 'podcast.xml')
-    obj.put(Metadata={"Content-Type": "application/rss+xml"})
+    bucket.upload_file('bucket/podcast.xml', 'podcast.xml',
+                       ExtraArgs={'ContentType': 'application/rss+xml'})
 
     # only upload new files 
     for path in glob.glob("bucket/*.mp3"):
         mp3 = os.path.basename(path)
         if mp3 not in published:
-            key = bucket.upload_file(path, mp3)
+            key = bucket.upload_file(path, mp3, 
+                                     ExtraArgs={"ContentType": "audio/mpeg"})
 
 def published_files():
     s3 = boto3.resource('s3')

@@ -10,6 +10,7 @@ import boto3
 import codecs
 import jinja2
 import logging
+import datetime
 import requests
 import feedparser
 import youtube_dl
@@ -23,11 +24,11 @@ def main():
 def add_enclosures(feed):
     """
     This does most of the work. It walks through the entries in the feed
-    and looks to see if an mp3 has been uploaded to Amazon. If it hasn't
+    and looks to see if an mp3 has been uploaded to Amazon S3. If it hasn't
     then it downloads the video from Vimeo, and extracts the audio, and 
     uploads it to S3. Each entry in the feed object that is passed in is 
-    annotated with the enclosure_url and enclosure_length that is needed
-    to write out the podcast.
+    annotated with the title, enclosure_url and enclosure_length that is 
+    needed to write out the podcast.
     """
 
     new_entries = []
@@ -84,7 +85,12 @@ def publish(feed):
     Publishes the feed.
     """
     tmpl = jinja2.Template(codecs.open("podcast.j2", "r", "utf8").read())
-    xml = tmpl.render(entries=feed.entries, feed_url=S3_BUCKET_URL + "podcast.xml") 
+    now = datetime.datetime.utcnow()
+    xml = tmpl.render(
+        pub_date=now.strftime("%a, %d %b %Y %H:%M:%S +0000"),
+        entries=feed.entries,
+        feed_url=S3_BUCKET_URL + "podcast.xml"
+    ) 
     codecs.open("tmp/podcast.xml", "w", "utf8").write(xml)
 
     s3 = boto3.resource('s3')
@@ -92,6 +98,8 @@ def publish(feed):
     bucket.upload_file('tmp/podcast.xml', 'podcast.xml',
                        ExtraArgs={'ContentType': 'application/rss+xml'})
     logging.info("published podcast.xml")
+    for path in glob.glob("tmp/*"):
+        os.remove(path)
 
 def get_object(key):
     s3 = boto3.resource('s3')

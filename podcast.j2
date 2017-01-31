@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" 
     xmlns:atom="http://www.w3.org/2005/Atom" 
-    xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+    xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+    xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule">
 
 <channel>
     <title>MITH's Digital Dialogues</title>
@@ -13,7 +14,9 @@
         <link>http://mith.umd.edu/digital-dialogues/</link>
     </image>
     <language>en-US</language>
+    <pubDate>{{ pub_date }}</pubDate>
     <atom:link rel="self" href="{{ feed_url }}" />
+    <creativeCommons:license>https://creativecommons.org/licenses/by-sa/3.0/</creativeCommons:license>
     <itunes:category text="Society &amp; Culture" />
     <itunes:category text="Technology" />
     <itunes:explicit>no</itunes:explicit>

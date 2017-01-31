@@ -25,5 +25,10 @@ result at:
 
 http://digital-dialogues.s3-website-us-east-1.amazonaws.com/podcast.xml
 
+And once it's working you can put it in your crontab, to run every day at noon
+doing something like this:
+
+    9 19 * * * cd /home/edsu/mithcast; .venv/bin/python mithcast.py
+
 [Digital Dialogue RSS feed]: http://mith.umd.edu/digital-dialogues/dialogues/feed/
 

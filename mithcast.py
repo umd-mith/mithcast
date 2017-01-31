@@ -33,19 +33,21 @@ def add_enclosures(feed):
     new_entries = []
     for entry in feed.entries:
 
-        vimeo_url = get_vimeo_url(entry.link)
-        if not vimeo_url:
+        dd = DigitalDialogue(entry.link)
+        if not dd.vimeo_url:
             continue
 
-        logging.info("found video %s", vimeo_url)
-        mp3_file = "%s.mp3" % os.path.basename(vimeo_url) 
+        logging.info("found video %s", dd.vimeo_url)
+        entry.title = dd.title
+        mp3_file = "%s.mp3" % os.path.basename(dd.vimeo_url) 
         mp3_obj = get_object(mp3_file)
 
         if mp3_obj:
             entry.enclosure_length = mp3_obj.content_length
         else:
-            mp3_path = download_mp3(vimeo_url)
+            mp3_path = download_mp3(vimeo.url)
             mp3_file = os.path.basename(mp3_path)
+            s3 = boto3.resource('s3')
             bucket = s3.Bucket(S3_BUCKET)
             key = bucket.upload_file(mp3_path, mp3_file, 
                                      ExtraArgs={"ContentType": "audio/mpeg"})
@@ -55,16 +57,6 @@ def add_enclosures(feed):
         new_entries.append(entry)
 
     feed.entries = new_entries
-
-def get_vimeo_url(url):
-    """
-    Scrapes the Vimeo URL out of the detail page for a Digital Dialogue event.
-    """
-    html = requests.get(url).content
-    m = re.search('https://vimeo.com/\d+', html)
-    if not m:
-        return None
-    return m.group(0)
 
 def download_mp3(vimeo_url):
     """
@@ -99,6 +91,7 @@ def publish(feed):
     bucket = s3.Bucket(S3_BUCKET)
     bucket.upload_file('tmp/podcast.xml', 'podcast.xml',
                        ExtraArgs={'ContentType': 'application/rss+xml'})
+    logging.info("published podcast.xml")
 
 def get_object(key):
     s3 = boto3.resource('s3')
@@ -108,6 +101,22 @@ def get_object(key):
     except Exception as e:
         o = None
     return o
+
+class DigitalDialogue():
+    def __init__(self, url):
+        self.url = url
+        self.title = None
+        self.vimeo_url = None
+
+        html = requests.get(url).text
+        m = re.search('https://vimeo.com/\d+', html)
+        if m:
+            self.vimeo_url = m.group(0)
+
+        m = re.search('<h1 class="entry-title">(.+?)</h1>', html)
+        if m:
+            self.title = m.group(1)
+
 
 if __name__ == "__main__":
     logging.basicConfig(

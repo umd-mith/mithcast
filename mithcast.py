@@ -46,7 +46,15 @@ def add_enclosures(feed):
         if mp3_obj:
             entry.enclosure_length = mp3_obj.content_length
         else:
-            mp3_path = download_mp3(vimeo.url)
+            tries = 0
+            while tries < 5:
+                tries += 1
+                try:
+                    mp3_path = download_mp3(dd.vimeo_url)
+                    break
+                except youtube_dl.utils.DownloadError as e:
+                    logging.error(e)
+                    logging.info("trying again %s", tries)
             mp3_file = os.path.basename(mp3_path)
             s3 = boto3.resource('s3')
             bucket = s3.Bucket(S3_BUCKET)
@@ -78,7 +86,9 @@ def download_mp3(vimeo_url):
     }
     ydl = youtube_dl.YoutubeDL(opts)
     ydl.download([vimeo_url])
-    return "tmp/%s.mp3" % video_id
+    mp3_file = "tmp/%s.mp3" % video_id
+    logging.info("got mp3 %s", mp3_file)
+    return mp3_file
 
 def publish(feed):
     """

@@ -8,3 +8,6 @@ boto3 = "*"
 youtube-dl = "*"
 jinja2 = "*"
 feedparser = "*"
+
+[requires]
+python_version = "3.6"

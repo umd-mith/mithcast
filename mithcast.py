@@ -36,6 +36,7 @@ def add_enclosures(feed):
 
         dd = DigitalDialogue(entry.link)
         if not dd.vimeo_url:
+            logging.warn("unable to find video for %s", entry.link)
             continue
 
         logging.info("found video %s", dd.vimeo_url)
@@ -127,9 +128,9 @@ class DigitalDialogue():
         self.vimeo_url = None
 
         html = requests.get(url).text
-        m = re.search('https://vimeo.com/\d+', html)
+        m = re.search('https://(?:player/)?vimeo.com/(?:video/)?(\d+)', html)
         if m:
-            self.vimeo_url = m.group(0)
+            self.vimeo_url = 'https://vimeo.com/%s' % m.group(1)
 
         m = re.search('<h1 class="entry-title">(.+?)</h1>', html)
         if m:

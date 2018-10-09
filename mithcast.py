@@ -128,7 +128,7 @@ class DigitalDialogue():
         self.vimeo_url = None
 
         html = requests.get(url).text
-        m = re.search('https://(?:player/)?vimeo.com/(?:video/)?(\d+)', html)
+        m = re.search('https://(?:player\.)?vimeo.com/(?:video/)?(\d+)', html)
         if m:
             self.vimeo_url = 'https://vimeo.com/%s' % m.group(1)
 
